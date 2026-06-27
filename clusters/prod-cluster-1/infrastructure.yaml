@@ -1,0 +1,71 @@
+﻿---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-essentials
+  namespace: flux-system
+spec:
+  interval: 5m
+  retryInterval: 1m
+  timeout: 3m
+  path: ./infrastructure/essentials/overlays/prod-cluster-1
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-crds
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infra-essentials
+  interval: 5m
+  retryInterval: 1m
+  timeout: 3m
+  path: ./infrastructure/crds/overlays/prod-cluster-1
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-resources
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infra-crds
+  interval: 5m
+  retryInterval: 1m
+  timeout: 3m
+  path: ./infrastructure/resources/overlays/prod-cluster-1
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infra-apps
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: infra-resources
+  interval: 5m
+  retryInterval: 1m
+  timeout: 3m
+  path: ./infrastructure/apps/overlays/prod-cluster-1
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+

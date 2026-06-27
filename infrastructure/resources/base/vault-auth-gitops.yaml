@@ -1,0 +1,15 @@
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: gitops
+  namespace: vault
+spec:
+  method: kubernetes
+  mount: ${cluster_name}
+  allowedNamespaces:
+    - "*"
+  kubernetes:
+    role: gitops
+    serviceAccount: default
+  vaultConnectionRef: default

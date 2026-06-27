@@ -1,0 +1,36 @@
+﻿---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kubeping
+  namespace: flux-system
+spec:
+  releaseName: kubeping
+  targetNamespace: kubeping
+  install:
+    createNamespace: true
+  interval: 5m
+  chart:
+    spec:
+      chart: kubeping
+      version: "1.1.1"
+      sourceRef:
+        kind: HelmRepository
+        name: teymurgahramanov
+        namespace: flux-system
+      interval: 5m
+  values:
+    web:
+      ingress:
+        enabled: true
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt
+        className: traefik
+        host: kubeping.example.az
+        tls:
+          enabled: true
+          secretName: kubeping-tls
+    exporter:
+      daemonsetAnnotations:
+        reloader.stakater.com/auto: "true"
+      config: {}

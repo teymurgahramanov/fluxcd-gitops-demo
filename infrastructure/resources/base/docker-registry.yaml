@@ -1,0 +1,39 @@
+﻿---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultStaticSecret
+metadata:
+  name: docker-registry
+  namespace: shared
+spec:
+  destination:
+    transformation:
+      excludeRaw: true
+      excludes:
+        - .*
+      templates:
+        ".dockerconfigjson":
+          text: |
+            {{- $config := dict -}}
+            {{- range $k, $v := (get .Secrets "auths") -}}
+              {{- $username := get $v "username" -}}
+              {{- $password := get $v "password" -}}
+              {{- $_ := set $config $k (
+                dict
+                  "username" $username
+                  "password" $password
+                  "auth" (list $username ":" $password | join "" | b64enc)
+                )
+              -}}
+            {{- end -}}
+            {{- dict "auths" $config | mustToJson -}}
+    create: true
+    name: docker-registry
+    type: kubernetes.io/dockerconfigjson
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+  hmacSecretData: true
+  mount: kv
+  path: gitops/docker-registry
+  type: kv-v2
+  vaultAuthRef: vault/gitops
