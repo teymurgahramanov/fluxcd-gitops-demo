@@ -1,6 +1,8 @@
 ﻿# GitOps FluxCD Example
 
-This repository is intended for reference purposes only. It provides a small example of how a FluxCD GitOps repository can be organized for multiple Kubernetes clusters.
+<p align="center">❗ THIS REPOSITORY IS INTENDED FOR REFERENCE PURPOSES ONLY. ❗</p>
+
+It provides a small example of how a FluxCD GitOps repository can be organized for multiple Kubernetes clusters.
 
 ## What This Shows
 
